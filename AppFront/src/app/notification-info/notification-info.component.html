@@ -1,0 +1,218 @@
+<!--<button mat-button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight" (click)="getALlByIceAgence()">-->
+<!--  <a class="nav-link" tabindex="-1">-->
+<!--    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bell-fill" viewBox="0 0 16 16">-->
+<!--      <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2m.995-14.901a1 1 0 1 0-1.99 0A5 5 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901"/>-->
+<!--    </svg>-->
+<!--    <span class="badge bg-danger">3</span>-->
+<!--  </a>-->
+<!--</button>-->
+
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel" >
+    <div class="offcanvas-header">
+        <h5 id="offcanvasRightLabel">Notification:</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+
+
+    <div *ngIf="authService.roles=='USER'"  >
+
+        <div *ngFor="let item of notificationClient">
+            <div class="notif_card " *ngIf="item.confermer|| item.annuler"     (click)="showDialoge(item) " [ngStyle]="item.visibleClinet==true?{'background-color': '#9393c6'}:{'background-color': '#39394f'}"   >
+                <img src="./assets/images/user.png" alt="avatar"
+                     style="width: 46px;
+    border-radius: 50%;
+    height: 50px;
+    position: relative;
+    top: 0.5rem;" />
+                <div style="    font-size: 15px;
+    line-height: 24px;
+    margin-top: -3rem;
+    padding: 0.5rem;
+    margin-left: 4rem; ">
+                    <p  style="font-size: 15px;line-height: 24px;">
+                        appartment de code <strong *ngIf="item.iceAgence!=null">{{item.iceAgence}}</strong>
+                        <strong *ngIf="item.cinPropAppartement!=null">{{item.cinPropAppartement}}</strong>
+                        est  rserver <br> par le client de cin {{item.cinClient}}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <div *ngIf="authService.roles.includes('MANAGER-APT')||authService.roles.includes('MANAGER-VOI')" style="overflow: scroll;">
+        <div  class="offcanvas-body" style=" max-height: 85px;margin-bottom:1px;overflow: hidden;background-color: #0dfd853b;border-radius: 13px;" *ngFor="let e of dataByIceAgence">
+
+            <div *ngIf="authService.roles.includes('MANAGER-APT')"  (click)="showDialog(e);getClientByCin(e.cinClient);calculerNombreJours(e.dateDebutReservation,e.dateFinReservation);findApparetementByCode(e.codeAppartement);findReservationByRef()" style="display: flex" >
+                <img src="./assets/images/user.png" alt="avatar" style="width: 46px;border-radius: 50%;height: 50px;" />
+                <div style="    margin-left: 8px;">
+                    <p  style="font-size: 15px;line-height: 24px;">
+                        appartment de code <strong>{{e.codeAppartement}}</strong>
+                        est  rserver <br> par le client de cin {{e.cinClient}}
+                    </p>
+                    <div style="display: inline-block;position: relative;left: 219px;top: -19px;">
+                        <span style="font-size: 12px;color: #850202;">1m ago </span>
+                        <i [ngClass]="e.isvisible?'bi bi-check2-all':'bi bi-check2'"></i>
+                        <!--          <i *ngIf="e.isvisible" style="font-size: 20px;color: aqua;" class="bi bi-check2-all"></i>-->
+                        <!--          <i *ngIf="!e.isvisible" style="font-size: 20px;color: #dad5d5;" class="bi bi-check2"></i>-->
+                    </div>
+                </div>
+            </div>
+
+
+
+            <div  *ngIf="authService.roles.includes('MANAGER-VOI')" (click)="showDialog(e);getClientByCin(e.cinClient);calculerNombreJours(e.dateDebutReservation,e.dateFinReservation);findVoitureByMatricule(e.matriculeVoiture);findReservationByRef()" style="display: flex">
+                <img src="./assets/images/user.png" alt="avatar" style="width: 46px;border-radius: 50%;height: 50px;"/>
+                <div  style="margin-left: 8px;">
+                    <p style="font-size: 15px;line-height: 24px;">
+                        voiture de matricule <strong>{{e.matriculeVoiture}}</strong>
+                        est <br>  rserver  par le client de cin
+                        {{e.cinClient}}
+                    </p>
+                    <div style="display: inline-block;position: relative;left: 219px;top: -19px;">
+                        <span style="font-size: 12px;color: #850202;">1m ago </span>
+                        <i [ngClass]="e.isvisible?'bi bi-check2-all':'bi bi-check2'"></i>
+                    </div>
+                    <!--          <i class="bi bi-check2"></i>-->
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!--    <div class="notif_card " (click)="showDialog(e);getClientByCin(e.cinClient);calculerNombreJours(e.dateDebutReservation,e.dateFinReservation);findApparetementByCode(e.codeAppartement);findReservationByRef() " *ngIf="authService.roles.includes('MANAGER-APT')">-->
+    <!--      <img src="./assets/images/user.png" alt="avatar" />-->
+
+    <!--      <div class="description">-->
+    <!--        <p class="user_activity">-->
+    <!--          appartment de code <strong>{{e.codeAppartement}}</strong>-->
+    <!--          est  rserver  par le client de cin <br>-->
+    <!--          {{e.cinClient}}-->
+    <!--        </p>-->
+    <!--        <div class="ez">-->
+    <!--          <span style="position: relative;left: 213px;   bottom: 12px;" class="time">1m ago </span>-->
+    <!--          <i *ngIf="e.isvisible" class="bi bi-check2-all"></i>-->
+    <!--          <i *ngIf="!e.isvisible" class="bi bi-check2"></i>-->
+    <!--        </div>-->
+    <!--        &lt;!&ndash;          <i class="bi bi-check2"></i>&ndash;&gt;-->
+
+    <!--      </div>-->
+    <!--    </div>-->
+
+    <!--    <div class="notif_card " (click)="showDialog(e);getClientByCin(e.cinClient);calculerNombreJours(e.dateDebutReservation,e.dateFinReservation);findVoitureByMatricule(e.matriculeVoiture);findReservationByRef()" *ngIf="authService.roles.includes('MANAGER-VOI')">-->
+    <!--      <img src="./assets/images/user.png" alt="avatar" />-->
+
+    <!--      <div class="description">-->
+    <!--        <p class="user_activity">-->
+    <!--          voiture de matricule <strong>{{e.matriculeVoiture}}</strong>-->
+    <!--          est <br>  rserver  par le client de cin-->
+    <!--          {{e.cinClient}}-->
+    <!--        </p>-->
+    <!--        <div class="ez">-->
+    <!--          <span style="position: relative;left: 213px;bottom: 12px;" class="time">1m ago </span>-->
+    <!--          <i *ngIf="e.isvisible" class="bi bi-check2-all"></i>-->
+    <!--          <i *ngIf="!e.isvisible" class="bi bi-check2"></i>-->
+    <!--        </div>-->
+    <!--        &lt;!&ndash;          <i class="bi bi-check2"></i>&ndash;&gt;-->
+
+    <!--      </div>-->
+    <!--    </div>-->
+
+</div>
+<!--</div>-->
+
+
+
+
+<p-dialog   [(visible)]="display"  [style]="{width: '720px',height:'420px'}" [header]="'Notification'" [modal]="true" styleClass="p-fluid">
+
+
+
+    <div *ngIf="authService.roles.includes('MANAGER-APT')||authService.roles.includes('MANAGER-VOI')" style="display:flex;justify-content: space-around">
+        <div>
+            <p>Nome de client : {{dataClientByCin.nom}}</p>
+            <p>Prenome de client : {{dataClientByCin.prenom}}</p>
+
+            <p *ngIf="authService.roles.includes('MANAGER-APT')">L'adresse de l'apparetement : {{dataApparetementByCode.adresse}}</p>
+            <p *ngIf="authService.roles.includes('MANAGER-APT')">Prix de L'apparetement :{{dataApparetementByCode.loyerMensuel}}$</p>
+
+            <p *ngIf="authService.roles.includes('MANAGER-VOI')">Prix de L'voiture :{{dataVoitureByMatricue.prix}}$</p>
+
+            <p>Nomber des Joures de reservation : {{numberJoures}} Jours</p>
+        </div>
+        <div>
+<!--            <img [src]="returnUrl(dataApparetementByCode)" style="width: 270px;height:250px " class="img-fluid" alt="">-->
+            <img [src]="returnUrl(dataVoitureByMatricue)" style="width: 270px;height:250px " class="img-fluid" alt="">
+<!--            <img src="assets/photo/Apparetement/image1.jpg" style="width: 270px;height:250px " class="img-fluid" alt="">-->
+        </div>
+    </div>
+
+    <div *ngIf="authService.roles=='USER'" [ngStyle]="notifiactionSelectionner.confermer?{'background-color': 'rgba(0, 170, 130, 0.88)'}:{'background-color': 'rgba(170, 0, 40, 0.88)'}"
+         class="notif_card "  style="width: 39.5rem; height: 25rem;">
+        <div class="description" style="color:white ; padding :6rem">
+            <p>Nous sommes heureux de vous informer que votre<br/>
+                réservation pour  </p>
+            <div *ngIf="notifiactionSelectionner.matriculeVoiture!=null">une voiture
+                sur notre plateforme a été confirmée avec succès</div>
+            <div *ngIf="notifiactionSelectionner.codeAppartement!=null">une appartement
+                sur notre plateforme a été confirmée avec succès</div>
+
+            <p>Voici les détails de votre réservation :
+            </p>
+            <ul>
+                <li *ngIf="notifiactionSelectionner.matriculeVoiture!=null">matricule de voiture : {{notifiactionSelectionner.matriculeVoiture}}</li>
+                <li *ngIf="notifiactionSelectionner.codeAppartement!=null">code d'appartement : {{notifiactionSelectionner.codeAppartement}}</li>
+                <li>Date de début de la location : {{notifiactionSelectionner.dateDebutReservation}}</li>
+                <li>Date de fin de la location :{{notifiactionSelectionner.dateFinReservation}}</li>
+                <li>Numéro de réservation :{{notifiactionSelectionner.refReservation}}</li>
+            </ul>
+        </div>
+    </div>
+    <ng-template pTemplate="footer">
+
+        <div *ngIf="authService.roles.includes('MANAGER-APT')||authService.roles.includes('MANAGER-VOI')">
+            <button *ngIf="reseirvationBollean || dataAgence.confermer != 1" type="button" class="btn btn-outline-danger btn-sm mx-2" (click)="deleteReservationByRef()">Reject</button>
+            <!--    <button  class="btn btn-outline-danger btn-sm mx-2" (click)="deleteReservationByRef()">Reject</button>-->
+            <button *ngIf="reseirvationBollean" class="btn btn-outline-success btn-sm mx-2" (click)="handeleSaveLocation()">Confermet</button>
+        </div>
+        <div *ngIf="authService.roles=='USER' && notifiactionSelectionner.confermer==true ">
+            si vous voulez d'annuler la location cliquer sur annuler
+            <button class="btn btn-outline-danger btn-sm mx-2" (click)="handelAnnuler(notifiactionSelectionner)">annuler</button>
+            <a class=" btn-sm mx-2" style="cursor: pointer;text-decoration: none" (click)="redirectVersfacture()"><strong>aller vers facture <i class="bi bi-arrow-right-square"></i> </strong> </a>
+        </div>
+
+
+    </ng-template>
+
+</p-dialog >
+
+
+
+
+
+<!-- Button trigger modal -->
+
+<!-- Modal -->
+
+
+<!--<div id="myModal" class="modal fade">-->
+<!--<div class="modal-dialog modal-confirm">-->
+<!--  <div class="modal-content">-->
+<!--    <div class="modal-header flex-column">-->
+<!--      <div class="icon-box">-->
+<!--        <i class="material-icons">&#xE5CD;</i>-->
+<!--      </div>-->
+<!--      <h4 class="modal-title w-100">Are you sure?</h4>-->
+<!--      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>-->
+<!--    </div>-->
+<!--    <div class="modal-body">-->
+<!--      <p>Do you really want to delete these records? This process cannot be undone.</p>-->
+<!--    </div>-->
+<!--    <div class="modal-footer justify-content-center">-->
+<!--      <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>-->
+<!--      <button type="button" class="btn btn-danger">Delete</button>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+<!--</div>-->
